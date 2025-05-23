@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cabin } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const cabin = Cabin({
   subsets: ["latin"],
@@ -18,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${cabin.className} antialiased`}>{children}</body>
+      <body className={`${cabin.className} antialiased`}>
+        {children} <Toaster />
+      </body>
     </html>
   );
 }
