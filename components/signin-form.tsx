@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
-export function LoginForm({
+export function SignInForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
@@ -52,9 +53,12 @@ export function LoginForm({
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
+                <Link
+                  href="/authentication/sign-up"
+                  className="underline underline-offset-4"
+                >
                   Sign up
-                </a>
+                </Link>
               </div>
             </div>
           </form>
