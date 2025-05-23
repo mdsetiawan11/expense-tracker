@@ -24,10 +24,11 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { Separator } from "./ui/separator";
 
 const FormSchema = z.object({
   email: z.string().email({
-    message: "Username must be at least 2 characters.",
+    message: "Email must be valid.",
   }),
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
@@ -95,20 +96,22 @@ export function SignInForm({
                 )}
               />
               <Button type="submit" className="w-full">
-                Submit
+                Sign In
               </Button>
             </form>
           </Form>
-
           <div className="text-center text-sm mt-4">
-            Don&apos;t have an account?{" "}
             <Link
               href="/authentication/sign-up"
               className="underline underline-offset-4"
             >
-              Sign up
+              Forgot your password?
             </Link>
           </div>
+          <Separator className="my-4" />
+          <Button variant={"outline"} className="w-full">
+            <Link href="/authentication/sign-up">Sign up</Link>
+          </Button>
         </CardContent>
       </Card>
     </div>
