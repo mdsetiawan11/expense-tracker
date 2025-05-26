@@ -25,6 +25,9 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Separator } from "./ui/separator";
+import { signIn } from "@/lib/actions";
+import { redirect } from "next/navigation";
+import { useState } from "react";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -40,6 +43,7 @@ export function SignInForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -47,16 +51,23 @@ export function SignInForm({
       password: "",
     },
   });
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setLoading(true);
+    const response = await signIn(data);
+    if (response.errorMessage != null) {
+      toast({
+        title: "Error",
+        description: response.errorMessage,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Signin successfully.",
+      });
+      redirect("/dashboard");
+    }
+    setLoading(false);
   }
 
   return (
@@ -95,7 +106,7 @@ export function SignInForm({
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={loading}>
                 Sign In
               </Button>
             </form>
@@ -109,9 +120,12 @@ export function SignInForm({
             </Link>
           </div>
           <Separator className="my-4" />
-          <Button variant={"outline"} className="w-full">
-            <Link href="/authentication/sign-up">Sign up</Link>
-          </Button>
+
+          <Link href="/authentication/sign-up">
+            <Button variant={"outline"} className="w-full">
+              Sign up
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>

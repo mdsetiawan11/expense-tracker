@@ -9,12 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -23,6 +21,10 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { SignUp } from "@/lib/actions";
+import { redirect } from "next/navigation";
+import { use } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -31,8 +33,8 @@ const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
   }),
 });
 
@@ -41,6 +43,7 @@ export function SignUpForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const { toast } = useToast();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -50,15 +53,21 @@ export function SignUpForm({
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const response = await SignUp(data);
+    if (response.errorMessage != null) {
+      toast({
+        title: "Error",
+        description: response.errorMessage,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Account created successfully.",
+      });
+      redirect("/");
+    }
   }
 
   return (
