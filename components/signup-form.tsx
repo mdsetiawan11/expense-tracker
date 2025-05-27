@@ -22,9 +22,10 @@ import {
   FormMessage,
 } from "./ui/form";
 import { SignUp } from "@/lib/actions";
-import { redirect } from "next/navigation";
-import { use } from "react";
+import { redirect, useRouter } from "next/navigation";
+import { use, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { authClient } from "@/lib/auth/auth-client";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -43,6 +44,9 @@ export function SignUpForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const { toast } = useToast();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -53,21 +57,43 @@ export function SignUpForm({
     },
   });
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const response = await SignUp(data);
-    if (response.errorMessage != null) {
-      toast({
-        title: "Error",
-        description: response.errorMessage,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Account created successfully.",
-      });
-      redirect("/");
-    }
+  async function onSubmit(formData: z.infer<typeof FormSchema>) {
+    var email = formData.email;
+    var name = formData.name;
+    var password = formData.password;
+
+    const { data, error } = await authClient.signUp.email(
+      {
+        /**
+         * The user email
+         */
+        email,
+        /**
+         * The user password
+         */
+        password,
+        /**
+         * remember the user session after the browser is closed.
+         * @default true
+         */
+        name,
+      },
+      {
+        onRequest: (ctx) => {
+          setLoading(true);
+        },
+        onSuccess: (ctx) => {
+          // redirect to the dashboard
+          //alert("Logged in successfully");
+          router.push("/dashboard");
+        },
+        onError: (ctx) => {
+          // display the error message
+          setError(ctx.error.message);
+          setLoading(false);
+        },
+      }
+    );
   }
 
   return (
@@ -121,7 +147,7 @@ export function SignUpForm({
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={loading}>
                 Submit
               </Button>
             </form>

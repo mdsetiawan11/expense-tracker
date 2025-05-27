@@ -54,20 +54,6 @@ export function SignInForm({
     },
   });
   async function onSubmit(formData: z.infer<typeof FormSchema>) {
-    // const response = await signIn(data);
-    // if (response.errorMessage != null) {
-    //   toast({
-    //     title: "Error",
-    //     description: response.errorMessage,
-    //     variant: "destructive",
-    //   });
-    // } else {
-    //   toast({
-    //     title: "Success",
-    //     description: "Signin successfully.",
-    //   });
-    //   redirect("/dashboard");
-    // }
     var email = formData.email;
     var password = formData.password;
     const { data, error } = await authClient.signIn.email(

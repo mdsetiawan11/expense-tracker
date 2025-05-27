@@ -27,6 +27,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Session, User } from "better-auth";
+import LogoutButton from "./auth/logout-button";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -118,12 +119,7 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <Link href={"/authentication/sign-in"}>
-              <DropdownMenuItem>
-                <LogOutIcon />
-                Log out
-              </DropdownMenuItem>
-            </Link>
+            <LogoutButton />
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
