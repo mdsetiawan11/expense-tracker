@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Sheet,
   SheetClose,
@@ -26,33 +27,77 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 const FormSchema = z.object({
-  name: z.string({
-    required_error: "Category Name is required.",
+  name: z.string().min(2, {
+    message: "Category name must be at least 2 characters.",
   }),
-  type: z.string({
-    required_error: "Category Type is required.",
+  type: z.enum(["expenses", "income"], {
+    required_error: "You need to select a category type.",
   }),
 });
 
+const types = [
+  { label: "Expense", value: "EXPENSES" },
+  { label: "Expense", value: "EXPENSES" },
+] as const;
+
 export function AddSheet() {
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      type: "",
     },
   });
 
-  async function onSubmit(formData: z.infer<typeof FormSchema>) {}
+  async function onSubmit(formData: z.infer<typeof FormSchema>) {
+    setLoading(true);
+
+    // Ubah type menjadi format ENUM prisma
+    const formattedData = {
+      name: formData.name,
+      type: formData.type.toUpperCase(), // "income" => "INCOME"
+    };
+
+    try {
+      const res = await fetch("/api/transaction-category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Failed to create category");
+      }
+
+      // Reset form dan tutup Sheet
+      form.reset();
+      setOpen(false);
+    } catch (error: any) {
+      alert(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      form.reset(); // Reset form saat sheet ditutup
+    }
+    setOpen(isOpen);
+  };
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <Button>Add Category</Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
+        <SheetHeader className="mb-4">
           <SheetTitle>Add Category</SheetTitle>
           <SheetDescription>
             Category are used to categorize your transactions. You can add,
@@ -78,17 +123,34 @@ export function AddSheet() {
               control={form.control}
               name="type"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
+                <FormItem className="space-y-3">
+                  <FormLabel>Types</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="expenses" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Expenses</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="income" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Income</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={loading}>
-              Sign In
+              Save
             </Button>
           </form>
         </Form>

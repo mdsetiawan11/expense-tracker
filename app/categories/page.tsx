@@ -4,17 +4,11 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { DataTable } from "./table/data-table";
 import { columns } from "./table/columns";
 import { TransactionCategory } from "./table/interface";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
-import { Button } from "@/components/ui/button";
 import { AddSheet } from "./add-sheet";
 
 async function fetchCategories(): Promise<TransactionCategory[]> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/categories/getbyuser?userId=${session?.user.id}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/categories`,
     {
       method: "GET",
       cache: "no-store",
@@ -25,7 +19,7 @@ async function fetchCategories(): Promise<TransactionCategory[]> {
 
 export default async function Page() {
   const data = (await fetchCategories()) as TransactionCategory[];
-
+  console.log("Data fetched:", data);
   return (
     <SidebarProvider>
       <AppSidebar variant="sidebar" />
