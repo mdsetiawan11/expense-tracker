@@ -28,6 +28,7 @@ import { Separator } from "./ui/separator";
 import { signIn } from "@/lib/actions";
 import { redirect } from "next/navigation";
 import { useState } from "react";
+import { authClient } from "@/lib/auth/auth-client";
 
 const FormSchema = z.object({
   email: z.string().email({
@@ -44,6 +45,7 @@ export function SignInForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -51,23 +53,55 @@ export function SignInForm({
       password: "",
     },
   });
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setLoading(true);
-    const response = await signIn(data);
-    if (response.errorMessage != null) {
-      toast({
-        title: "Error",
-        description: response.errorMessage,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Signin successfully.",
-      });
-      redirect("/dashboard");
-    }
-    setLoading(false);
+  async function onSubmit(formData: z.infer<typeof FormSchema>) {
+    // const response = await signIn(data);
+    // if (response.errorMessage != null) {
+    //   toast({
+    //     title: "Error",
+    //     description: response.errorMessage,
+    //     variant: "destructive",
+    //   });
+    // } else {
+    //   toast({
+    //     title: "Success",
+    //     description: "Signin successfully.",
+    //   });
+    //   redirect("/dashboard");
+    // }
+    var email = formData.email;
+    var password = formData.password;
+    const { data, error } = await authClient.signIn.email(
+      {
+        email,
+        /**
+         * The user password
+         */
+        password,
+        /**
+         * a url to redirect to after the user verifies their email (optional)
+         */
+        callbackURL: "/dashboard",
+        /**
+         * remember the user session after the browser is closed.
+         * @default true
+         */
+        rememberMe: false,
+      },
+      {
+        onRequest: (ctx) => {
+          setLoading(true);
+        },
+        onSuccess: (ctx) => {
+          // redirect to the dashboard
+          //alert("Logged in successfully");
+        },
+        onError: (ctx) => {
+          // display the error message
+          setError(ctx.error.message);
+          setLoading(false);
+        },
+      }
+    );
   }
 
   return (
