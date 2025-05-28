@@ -2,16 +2,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { TransactionCategory } from "./interface";
 import { MoreVertical } from "lucide-react";
+import { DeleteModal } from "../delete-modal";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -63,6 +56,16 @@ export const columns = ({
         name: category.name,
         type: category.type,
       };
+
+      const handleDelete = async () => {
+        await fetch("/api/categories", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: category.id }),
+        });
+        onSuccess(); // reload data
+      };
+
       return (
         <div className="flex justify-center items-center h-full w-full">
           <div className="flex flex-row gap-2">
@@ -71,20 +74,7 @@ export const columns = ({
               defaultValues={value}
               onSuccess={onSuccess}
             />
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <img
-                    src="/svg/delete.svg"
-                    alt="Delete"
-                    className="w-5 h-5 cursor-pointer"
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Delete</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <DeleteModal onConfirm={handleDelete} />
           </div>
         </div>
       );

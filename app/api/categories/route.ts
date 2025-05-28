@@ -109,3 +109,32 @@ export async function PUT(req: Request) {
     );
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const body = await req.json();
+    const { id } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Missing category id" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.transactionCategory.delete({
+      where: { id },
+    });
+
+    return NextResponse.json(
+      { message: "Transaction category deleted" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting transaction category:", error);
+    return NextResponse.json(
+      { message: "Internal server error", error },
+      { status: 500 }
+    );
+  }
+}
