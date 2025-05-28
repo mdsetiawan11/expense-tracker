@@ -31,9 +31,11 @@ export const columns: ColumnDef<TransactionCategory>[] = [
           </Badge>
         );
       } else if (category.type === "INCOME") {
-        <Badge variant="outline" className="text-green-700">
-          Income
-        </Badge>;
+        return (
+          <Badge variant="outline" className="text-green-700">
+            Income
+          </Badge>
+        );
       }
     },
   },

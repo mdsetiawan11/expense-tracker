@@ -88,7 +88,12 @@ export function SignUpForm({
           router.push("/dashboard");
         },
         onError: (ctx) => {
-          // display the error message
+          console.log(ctx);
+          toast({
+            title: "Something went wrong",
+            description: ctx.error.message ?? "Something went wrong.",
+            variant: "destructive",
+          });
           setError(ctx.error.message);
           setLoading(false);
         },

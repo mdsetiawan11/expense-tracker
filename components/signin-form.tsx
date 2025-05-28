@@ -82,7 +82,11 @@ export function SignInForm({
           //alert("Logged in successfully");
         },
         onError: (ctx) => {
-          // display the error message
+          toast({
+            title: "Something went wrong",
+            description: ctx.error.message ?? "Something went wrong.",
+            variant: "destructive",
+          });
           setError(ctx.error.message);
           setLoading(false);
         },

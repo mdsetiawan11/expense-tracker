@@ -9,14 +9,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -30,17 +27,12 @@ const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Category name must be at least 2 characters.",
   }),
-  type: z.enum(["expenses", "income"], {
+  type: z.enum(["EXPENSE", "INCOME"], {
     required_error: "You need to select a category type.",
   }),
 });
 
-const types = [
-  { label: "Expense", value: "EXPENSES" },
-  { label: "Expense", value: "EXPENSES" },
-] as const;
-
-export function AddSheet() {
+export function AddSheet({ onSuccess }: { onSuccess?: () => void }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -52,15 +44,17 @@ export function AddSheet() {
 
   async function onSubmit(formData: z.infer<typeof FormSchema>) {
     setLoading(true);
+    const res = await fetch("/api/session");
+    const data = await res.json();
 
-    // Ubah type menjadi format ENUM prisma
     const formattedData = {
       name: formData.name,
-      type: formData.type.toUpperCase(), // "income" => "INCOME"
+      type: formData.type,
+      userId: data.user.id,
     };
 
     try {
-      const res = await fetch("/api/transaction-category", {
+      const res = await fetch("/api/categories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +68,8 @@ export function AddSheet() {
         throw new Error(result.message || "Failed to create category");
       }
 
-      // Reset form dan tutup Sheet
+      if (onSuccess) onSuccess();
+
       form.reset();
       setOpen(false);
     } catch (error: any) {
@@ -133,13 +128,13 @@ export function AddSheet() {
                     >
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
-                          <RadioGroupItem value="expenses" />
+                          <RadioGroupItem value="EXPENSE" />
                         </FormControl>
-                        <FormLabel className="font-normal">Expenses</FormLabel>
+                        <FormLabel className="font-normal">Expense</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
-                          <RadioGroupItem value="income" />
+                          <RadioGroupItem value="INCOME" />
                         </FormControl>
                         <FormLabel className="font-normal">Income</FormLabel>
                       </FormItem>
