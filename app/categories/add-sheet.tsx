@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -52,10 +52,18 @@ export function AddSheet({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: defaultValues?.name || "",
-      type: defaultValues?.type || "EXPENSE",
+      name: defaultValues?.name ?? "",
+      type: defaultValues?.type ?? "EXPENSE",
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      name: defaultValues?.name ?? "",
+      type: defaultValues?.type ?? "EXPENSE",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValues]);
 
   async function onSubmit(formData: z.infer<typeof FormSchema>) {
     setLoading(true);

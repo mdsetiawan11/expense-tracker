@@ -8,6 +8,7 @@ import { DataTable } from "./table/data-table";
 import { columns } from "./table/columns";
 import { TransactionCategory } from "./table/interface";
 import { AddSheet } from "./add-sheet";
+import { Loader2 } from "lucide-react";
 
 async function fetchCategories(): Promise<TransactionCategory[]> {
   const sessionRes = await fetch("/api/session");
@@ -57,7 +58,12 @@ export default function Page() {
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               {loading ? (
-                <p>Loading...</p>
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                  <span className="text-sm text-muted-foreground">
+                    Loading...
+                  </span>
+                </div>
               ) : (
                 <DataTable
                   columns={columns({ onSuccess: loadData })}
