@@ -48,7 +48,7 @@ export default function Page() {
 
   return (
     <SidebarProvider>
-      <AppSidebar variant="sidebar" />
+      <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col p-4">
@@ -59,7 +59,10 @@ export default function Page() {
               {loading ? (
                 <p>Loading...</p>
               ) : (
-                <DataTable columns={columns} data={data} />
+                <DataTable
+                  columns={columns({ onSuccess: loadData })}
+                  data={data}
+                />
               )}
             </div>
           </div>

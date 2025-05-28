@@ -66,3 +66,46 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, name, type, userId } = body;
+
+    if (!id || !name || !type || !userId) {
+      return NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    if (type !== "INCOME" && type !== "EXPENSE") {
+      return NextResponse.json(
+        { message: "Invalid type. Must be INCOME or EXPENSE" },
+        { status: 400 }
+      );
+    }
+
+    const updatedCategory = await prisma.transactionCategory.update({
+      where: { id },
+      data: {
+        name,
+        type,
+        user: {
+          connect: { id: userId },
+        },
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Transaction category updated", data: updatedCategory },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating transaction category:", error);
+    return NextResponse.json(
+      { message: "Internal server error", error },
+      { status: 500 }
+    );
+  }
+}

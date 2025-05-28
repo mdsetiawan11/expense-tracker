@@ -146,7 +146,7 @@ export function SignInForm({
           <Separator className="my-4" />
 
           <Link href="/authentication/sign-up">
-            <Button variant={"outline"} className="w-full">
+            <Button variant={"outline-solid"} className="w-full">
               Sign up
             </Button>
           </Link>

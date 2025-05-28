@@ -18,12 +18,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,22 +32,13 @@ const FormSchema = z.object({
   }),
 });
 
-export function AddSheet({
-  onSuccess,
-  defaultValues,
-  isEdit = false,
-}: {
-  onSuccess?: () => void;
-  defaultValues?: { id?: string; name?: string; type?: "EXPENSE" | "INCOME" };
-  isEdit?: boolean;
-}) {
+export function EditSheet({ onSuccess }: { onSuccess?: () => void }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: defaultValues?.name || "",
-      type: defaultValues?.type || "EXPENSE",
+      name: "",
     },
   });
 
@@ -66,12 +51,11 @@ export function AddSheet({
       name: formData.name,
       type: formData.type,
       userId: data.user.id,
-      ...(isEdit && defaultValues?.id ? { id: defaultValues.id } : {}),
     };
 
     try {
       const res = await fetch("/api/categories", {
-        method: isEdit ? "PUT" : "POST",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -81,10 +65,7 @@ export function AddSheet({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(
-          result.message ||
-            (isEdit ? "Failed to update category" : "Failed to create category")
-        );
+        throw new Error(result.message || "Failed to create category");
       }
 
       if (onSuccess) onSuccess();
@@ -100,7 +81,7 @@ export function AddSheet({
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      form.reset(defaultValues || {}); // Reset form saat sheet ditutup
+      form.reset(); // Reset form saat sheet ditutup
     }
     setOpen(isOpen);
   };
@@ -108,29 +89,11 @@ export function AddSheet({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
-        {isEdit ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <img
-                  src="/svg/edit.svg"
-                  alt="Edit"
-                  className="w-5 h-5 cursor-pointer"
-                  onClick={() => setOpen(true)}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Edit</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ) : (
-          <Button onClick={() => setOpen(true)}> Add Category</Button>
-        )}
+        <Button>Add Category</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-4">
-          <SheetTitle>{isEdit ? "Edit Category" : "Add Category"}</SheetTitle>
+          <SheetTitle>Add Category</SheetTitle>
           <SheetDescription>
             Category are used to categorize your transactions. You can add,
             edit, or delete categories as needed.
@@ -160,7 +123,7 @@ export function AddSheet({
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      value={field.value}
+                      defaultValue={field.value}
                       className="flex flex-col space-y-1"
                     >
                       <FormItem className="flex items-center space-x-3 space-y-0">
@@ -182,7 +145,7 @@ export function AddSheet({
               )}
             />
             <Button type="submit" className="w-full" disabled={loading}>
-              {isEdit ? "Update" : "Save"}
+              Save
             </Button>
           </form>
         </Form>

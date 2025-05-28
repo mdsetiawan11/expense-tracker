@@ -13,8 +13,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { AddSheet } from "../add-sheet";
 
-export const columns: ColumnDef<TransactionCategory>[] = [
+export const columns = ({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}): ColumnDef<TransactionCategory>[] => [
   {
     accessorKey: "name",
     header: "Name",
@@ -26,13 +37,15 @@ export const columns: ColumnDef<TransactionCategory>[] = [
       const category = row.original;
       if (category.type === "EXPENSE") {
         return (
-          <Badge variant="outline" className="text-red-700">
+          <Badge variant="outline" className="inline-flex items-center gap-1">
+            <img src="/svg/expense.svg" alt="Expense" className="w-4 h-4" />
             Expense
           </Badge>
         );
       } else if (category.type === "INCOME") {
         return (
-          <Badge variant="outline" className="text-green-700">
+          <Badge variant="outline" className="inline-flex items-center gap-1">
+            <img src="/svg/income.svg" alt="Income" className="w-4 h-4" />
             Income
           </Badge>
         );
@@ -42,22 +55,38 @@ export const columns: ColumnDef<TransactionCategory>[] = [
 
   {
     id: "actions",
+    header: () => <div className="w-full text-center">Actions</div>,
     cell: ({ row }) => {
-      const payment = row.original;
-
+      const category = row.original;
+      const value = {
+        id: category.id,
+        name: category.name,
+        type: category.type,
+      };
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-center items-center h-full w-full">
+          <div className="flex flex-row gap-2">
+            <AddSheet
+              isEdit={true}
+              defaultValues={value}
+              onSuccess={onSuccess}
+            />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <img
+                    src="/svg/delete.svg"
+                    alt="Delete"
+                    className="w-5 h-5 cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
       );
     },
   },
