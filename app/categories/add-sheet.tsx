@@ -25,6 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -133,7 +134,9 @@ export function AddSheet({
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <Button onClick={() => setOpen(true)}> Add Category</Button>
+          <Button onClick={() => setOpen(true)}>
+            <Plus /> Category
+          </Button>
         )}
       </SheetTrigger>
       <SheetContent>

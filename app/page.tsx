@@ -119,7 +119,7 @@ export default function page() {
         </MobileNav>
       </Navbar>
       <div className="container mx-auto p-8 pt-24">
-        <Hero7 />
+        <Hero7 userId={user?.id} />
         <Feature43 />
       </div>
     </div>

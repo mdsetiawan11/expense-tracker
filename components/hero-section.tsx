@@ -1,7 +1,3 @@
-import { Star } from "lucide-react";
-import React from "react";
-
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 interface Hero7Props {
@@ -19,6 +15,7 @@ interface Hero7Props {
       alt: string;
     }[];
   };
+  userId?: string;
 }
 
 const Hero7 = ({
@@ -54,6 +51,7 @@ const Hero7 = ({
       },
     ],
   },
+  userId,
 }: Hero7Props) => {
   return (
     <section id="about" className="py-32">
@@ -64,9 +62,13 @@ const Hero7 = ({
             {description}
           </p>
         </div>
-        <Button asChild size="lg" className="mt-10">
-          <a href={button.url}>{button.text}</a>
-        </Button>
+        {userId ? (
+          <div></div>
+        ) : (
+          <Button asChild size="lg" className="mt-10">
+            <a href={button.url}>{button.text}</a>
+          </Button>
+        )}
       </div>
     </section>
   );

@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import { Cabin } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const cabin = Cabin({
   subsets: ["latin"],
@@ -27,7 +28,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <main>{children}</main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
