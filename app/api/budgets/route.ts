@@ -25,7 +25,38 @@ export async function GET(request: Request) {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json(budgets);
+  // Hitung sisa budget untuk setiap budget
+  const budgetsWithRemaining = await Promise.all(
+    budgets.map(async (budget) => {
+      // Hitung awal dan akhir bulan
+      const startDate = new Date(budget.year, budget.month - 1, 1);
+      const endDate = new Date(budget.year, budget.month, 1);
+
+      const totalTransaction = await prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: {
+          userId: budget.userId,
+          categoryId: budget.categoryId,
+          date: {
+            gte: startDate,
+            lt: endDate,
+          },
+          type: "EXPENSE",
+        },
+      });
+
+      const used = totalTransaction._sum.amount || 0;
+      const remaining = budget.amount - used;
+
+      return {
+        ...budget,
+        used,
+        remaining,
+      };
+    })
+  );
+
+  return NextResponse.json(budgetsWithRemaining);
 }
 
 export async function POST(req: Request) {
