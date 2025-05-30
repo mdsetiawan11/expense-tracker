@@ -85,24 +85,49 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { id, amount } = body;
+    const { id, amount, categoryId, month, year } = body;
 
-    if (!id || typeof amount !== "number") {
+    if (!id || typeof amount !== "number" || !categoryId || !month || !year) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const updatedBudget = await prisma.budget.update({
+    // Cek apakah budget dengan id tersebut ada
+    const existingBudget = await prisma.budget.findUnique({
       where: { id },
-      data: { amount },
     });
 
-    return NextResponse.json(
-      { message: "Budget updated", data: updatedBudget },
-      { status: 200 }
-    );
+    if (existingBudget != null) {
+      const existing = await prisma.budget.findUnique({
+        where: {
+          userId_categoryId_month_year: {
+            userId: existingBudget.userId,
+            categoryId,
+            month,
+            year,
+          },
+        },
+      });
+
+      if (existing) {
+        return NextResponse.json(
+          { message: "Budget already exists for this category and period" },
+          { status: 409 }
+        );
+      }
+
+      const updatedBudget = await prisma.budget.update({
+        where: { id },
+        data: { amount, categoryId, month, year },
+      });
+
+      return NextResponse.json(
+        { message: "Budget updated", data: updatedBudget },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     console.error("Error updating budget:", error);
     return NextResponse.json(

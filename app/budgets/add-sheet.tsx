@@ -31,6 +31,12 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { TransactionCategory } from "../categories/table/interface";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Budget form schema
 const FormSchema = z.object({
@@ -127,7 +133,15 @@ export function AddSheet({
         method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
-          isEdit ? { id: defaultValues?.id, amount: formData.amount } : payload
+          isEdit
+            ? {
+                id: defaultValues?.id,
+                categoryId: formData.categoryId,
+                amount: formData.amount,
+                month: formData.month,
+                year: formData.year,
+              }
+            : payload
         ),
       });
 
@@ -140,6 +154,11 @@ export function AddSheet({
       if (onSuccess) onSuccess();
       form.reset();
       setOpen(false);
+      toast({
+        title: "Success",
+        description: result.message,
+        variant: "default",
+      });
     } catch (error: any) {
       toast({
         title: "Cant save budget",
@@ -167,9 +186,27 @@ export function AddSheet({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
-        <Button onClick={() => setOpen(true)}>
-          <Plus /> Budget
-        </Button>
+        {isEdit ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <img
+                  src="/svg/edit.svg"
+                  alt="Delete"
+                  className="w-5 h-5 cursor-pointer"
+                  onClick={() => setOpen(true)}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Edit</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <Button onClick={() => setOpen(true)}>
+            <Plus /> Budget
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="mb-4">

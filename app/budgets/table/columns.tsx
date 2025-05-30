@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { DeleteModal } from "../delete-modal";
+import { AddSheet } from "../add-sheet";
 
 export const columns = ({
   onSuccess,
@@ -73,10 +74,18 @@ export const columns = ({
         onSuccess();
       };
 
+      const editValues = {
+        id: budget.id,
+        amount: budget.amount,
+        categoryId: budget.category?.id ?? "",
+        month: budget.month,
+        year: budget.year,
+      };
+
       return (
         <div className="flex justify-center items-center h-full w-full">
           <div className="flex flex-row gap-2">
-            {/* Tambahkan komponen edit budget di sini jika ada */}
+            <AddSheet defaultValues={editValues} isEdit onSuccess={onSuccess} />
             <DeleteModal onConfirm={handleDelete} />
           </div>
         </div>
