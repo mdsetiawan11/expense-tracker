@@ -142,7 +142,7 @@ export async function PUT(req: Request) {
         },
       });
 
-      if (existing) {
+      if (existing && id != existingBudget.id) {
         return NextResponse.json(
           { message: "Budget already exists for this category and period" },
           { status: 409 }
