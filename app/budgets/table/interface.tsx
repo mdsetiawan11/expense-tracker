@@ -12,4 +12,5 @@ export interface Budget {
     name: string;
     type: "INCOME" | "EXPENSE";
   };
+  remaining?: number;
 }

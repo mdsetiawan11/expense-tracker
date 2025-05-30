@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { DeleteModal } from "../delete-modal";
 import { AddSheet } from "../add-sheet";
+import { Progress } from "@/components/ui/progress";
 
 export const columns = ({
   onSuccess,
@@ -58,6 +59,34 @@ export const columns = ({
         })}
       </span>
     ),
+  },
+  {
+    accessorKey: "remaining",
+    header: "Remaining",
+    cell: ({ row }) => {
+      const remaining = row.original.remaining ?? 0;
+      const amount = row.original.amount ?? 1;
+      const percent = Math.max(0, Math.min((remaining / amount) * 100, 100));
+
+      let color = "bg-green-500";
+      if (remaining < 0) color = "bg-red-500";
+      else if (percent <= 30) color = "bg-yellow-400";
+
+      return (
+        <div className="flex flex-col gap-1 min-w-[120px]">
+          <div className="flex items-center gap-2">
+            <span>
+              {remaining.toLocaleString("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0,
+              })}
+            </span>
+          </div>
+          <Progress value={percent} className="h-2" />
+        </div>
+      );
+    },
   },
   {
     id: "actions",
