@@ -41,14 +41,14 @@ export const columns = ({
       if (type === "EXPENSE") {
         return (
           <Badge variant="outline" className="inline-flex items-center gap-1">
-            <img src="/svg/expense.svg" alt="Expense" className="w-4 h-4" />
+            <img src="/svg/expense.svg" alt="Expense" className="w-4 h-4 dark:invert dark:brightness-200" />
             Expense
           </Badge>
         );
       } else if (type === "INCOME") {
         return (
           <Badge variant="outline" className="inline-flex items-center gap-1">
-            <img src="/svg/income.svg" alt="Income" className="w-4 h-4" />
+            <img src="/svg/income.svg" alt="Income" className="w-4 h-4 dark:invert dark:brightness-200" />
             Income
           </Badge>
         );

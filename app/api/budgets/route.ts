@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
   // Hitung sisa budget untuk setiap budget
   const budgetsWithRemaining = await Promise.all(
-    budgets.map(async (budget) => {
+    budgets.map(async (budget: { year: number; month: number; userId: any; categoryId: any; amount: number; }) => {
       // Hitung awal dan akhir bulan
       const startDate = new Date(budget.year, budget.month - 1, 1);
       const endDate = new Date(budget.year, budget.month, 1);
