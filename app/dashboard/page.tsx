@@ -1,13 +1,52 @@
+'use client'
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { useEffect, useState } from "react"
+import { DashboardData } from "./interface"
 
-import data from "./data.json"
+async function fetchCategories(): Promise<DashboardData[]> {
+  const sessionRes = await fetch("/api/session");
+  const session = await sessionRes.json();
+
+  const userId = session?.user?.id;
+  if (!userId) return [];
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard?userId=${userId}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    }
+  );
+  return response.json();
+}
+
+
+
 
 export default function Page() {
+    const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchCategories();
+      setData(result);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />
@@ -20,7 +59,7 @@ export default function Page() {
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive />
               </div>
-              <DataTable data={data} />
+             
             </div>
           </div>
         </div>
