@@ -2,29 +2,23 @@
 
 import * as React from "react";
 import {
-  ArrowUpCircleIcon,
   ArrowUpDown,
-  BarChartIcon,
   CameraIcon,
   ClipboardListIcon,
   DatabaseIcon,
   FileCodeIcon,
   FileIcon,
   FileTextIcon,
-  FolderIcon,
   HelpCircleIcon,
   LayoutDashboardIcon,
-  ListIcon,
   PiggyBank,
   SearchIcon,
   SettingsIcon,
-  UsersIcon,
   Wallet2,
 } from "lucide-react";
 
 import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -35,7 +29,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { IconCategory } from "@tabler/icons-react";
 
 const data = {
   navMain: [
@@ -158,7 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="/">
                 <Wallet2 className="h-5 w-5" />
-                <span className="text-base font-semibold">Expense Tracker</span>
+                <span className="text-base font-semibold">SpendWise</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -99,39 +99,38 @@ export default function Page() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col p-4">
-          <div className="flex flex-row justify-between">
-            <div className="flex gap-4 mb-4">
-              <Select value={month} onValueChange={setMonth}>
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="Select Month" />
-                </SelectTrigger>
-                <SelectContent>
-                  {monthOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={year} onValueChange={setYear}>
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="Select Year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getYearOptions(7).map((y) => (
-                    <SelectItem key={y} value={y.toString()}>
-                      {y}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <AddSheet onSuccess={loadData} />
-          </div>
-
+        <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <div className="flex flex-row justify-between px-4 lg:px-6 gap-4">
+                <div className="flex gap-4">
+                  <Select value={month} onValueChange={setMonth}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Select Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {monthOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={year} onValueChange={setYear}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Select Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getYearOptions(7).map((y) => (
+                        <SelectItem key={y} value={y.toString()}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <AddSheet onSuccess={loadData} />
+              </div>
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
@@ -140,10 +139,12 @@ export default function Page() {
                   </span>
                 </div>
               ) : (
-                <DataTable
-                  columns={columns({ onSuccess: loadData })}
-                  data={data}
-                />
+                <div className="px-4 lg:px-6">
+                  <DataTable
+                    columns={columns({ onSuccess: loadData })}
+                    data={data}
+                  />
+                </div>
               )}
             </div>
           </div>

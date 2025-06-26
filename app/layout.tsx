@@ -10,8 +10,8 @@ const cabin = Cabin({
 });
 
 export const metadata: Metadata = {
-  title: "Expense Tracker",
-  description: "Expense Tracker is a simple app to track your expenses.",
+  title: "SpendWise - Expense Tracker",
+  description: "SpendWise is a simple app to track your expenses.",
 };
 
 export default function RootLayout({
@@ -24,8 +24,7 @@ export default function RootLayout({
       <body className={`${cabin.className}  antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
           disableTransitionOnChange
         >
           <main>{children}</main>

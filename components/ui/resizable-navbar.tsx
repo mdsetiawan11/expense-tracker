@@ -238,7 +238,7 @@ export const NavbarLogo = () => {
     >
       <Wallet2 className="h-6 w-6 " />
       <span className="font-medium text-black dark:text-white">
-        Expense Tracker
+        SpendWise
       </span>
     </a>
   );

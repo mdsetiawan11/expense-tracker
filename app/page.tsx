@@ -14,7 +14,6 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import { User } from "better-auth";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function page() {
@@ -26,10 +25,6 @@ export default function page() {
     {
       name: "Features",
       link: "#features",
-    },
-    {
-      name: "Contact",
-      link: "#contact",
     },
   ];
 
