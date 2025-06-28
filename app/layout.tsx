@@ -24,7 +24,8 @@ export default function RootLayout({
       <body className={`${cabin.className}  antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <main>{children}</main>

@@ -87,8 +87,8 @@ export function SectionCards({ data }: { data: DashboardData }) {
           </CardTitle>
           <div className="absolute right-4 top-4">
             <img
-              src="/svg/expense.svg"
-              alt="Expense"
+              src="/svg/transaction.svg"
+              alt="Transaction"
               className="w-5 h-5 dark:invert dark:brightness-200"
             />
           </div>
